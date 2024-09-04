@@ -1,7 +1,27 @@
 package main
 
-import "fmt"
+import (
+	"flag"
+	"fmt"
+
+	"github.com/zachturing/util/log"
+)
+
+var (
+	port = flag.Int("port", 30001, "port")
+)
 
 func main() {
-	fmt.Println("hello,world")
+	flag.Parse()
+
+	if err := initService(); err != nil {
+		log.Errorf("initService error: %v", err)
+		return
+	}
+
+	router := initRoute()
+
+	addr := fmt.Sprintf("0.0.0.0:%v", *port)
+	log.Debugf("start server at ", addr)
+	router.Run(addr)
 }
