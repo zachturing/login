@@ -10,9 +10,10 @@ const (
 	// SendSMSCodeFailed 发送验证码失败
 	SendSMSCodeFailed = 40001
 	// SMSCodeInvalid 验证码无效
-	SMSCodeInvalid = 40002
-
+	SMSCodeInvalid        = 40002
 	SMSCodeSetRedisFailed = 40003
+
+	RegisterFailed = 40004
 )
 
 // MapCodeToMsg 返回码对应信息
@@ -26,6 +27,7 @@ var MapCodeToMsg = map[int]string{
 	SendSMSCodeFailed:     "failed to send SMS code",
 	SMSCodeInvalid:        "invalid SMS code",
 	SMSCodeSetRedisFailed: "failed to set SMS code to redis",
+	RegisterFailed:        "register failed",
 }
 
 const (

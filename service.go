@@ -31,7 +31,7 @@ func initRoute() *gin.Engine {
 	group := router.Group("/api")
 	{
 		group.POST("/auth/sms", api.SendSMS)
-		// group.POST("/login/phone", api.LoginPhone)
+		group.POST("/auth/login/phone", api.LoginPhone)
 	}
 
 	return router
