@@ -1,0 +1,80 @@
+package api
+
+import (
+	"context"
+	"fmt"
+	"github.com/zachturing/login/common/define"
+	"github.com/zachturing/login/model"
+	"github.com/zachturing/login/util"
+	"gorm.io/gorm"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/zachturing/login/common/xhttp"
+	"github.com/zachturing/util/database/mysql"
+	"github.com/zachturing/util/database/redis"
+	"github.com/zachturing/util/log"
+)
+
+// 定义phoneParam结构体
+type phoneParam struct {
+	// 用户手机号
+	Phone string `json:"phone" validate:"required,len=11"`
+	// 短信验证码
+	SMSCode string `json:"sms_code" validate:"required,len=6"`
+}
+
+func LoginPhone(c *gin.Context) {
+	var param phoneParam
+	err := c.ShouldBindJSON(&param)
+	if err != nil {
+		log.Errorf("login phone: invalid param:%v, err:%v", param, err)
+		xhttp.ParamsError(c, fmt.Errorf("login phone: invalid param:%v, err:%v", param, err))
+		return
+	}
+
+	smsCode := redis.GetGlobalClient().Get(context.TODO(), smsKey(param.Phone)).Val()
+	if smsCode != param.SMSCode {
+		log.Errorf("login phone: %v, origin sms code not match %v->%v", param.Phone, param.SMSCode, smsCode)
+		xhttp.ParamsError(c, fmt.Errorf("invalid sms code"))
+		return
+	}
+
+	user, err := model.QueryUser(param.Phone)
+	if err == nil { // 查到，则登录成功，直接返回
+		token, _ := util.GenerateToken(int(user.ID))
+		log.Debugf("phone login: user:%v success", user.Phone)
+		xhttp.Data(c, map[string]string{
+			"token": token,
+		})
+		return
+	}
+
+	userID, err := registerUser(param.Phone)
+	if err != nil {
+		log.Errorf("phone login: register user %v failed, err:%v", param.Phone, err)
+		xhttp.ServerError(c, define.RegisterFailed, define.MapCodeToMsg[define.RegisterFailed])
+		return
+	}
+	token, _ := util.GenerateToken(userID)
+	log.Debugf("phone login: register success, phone:%v, userID:%v", param.Phone, userID)
+	xhttp.Data(c, map[string]string{
+		"token": token,
+	})
+	return
+}
+
+// registerUser 注册成功返回user_id
+func registerUser(phone string) (int, error) {
+	var userID int
+	mysql.GetGlobalDBIns().Transaction(func(tx *gorm.DB) error {
+		user := model.User{
+			Phone:            phone,
+			RegistrationTime: time.Now(),
+			LastLoginTime:    time.Now(),
+		}
+
+		return model.CreateUser(&user)
+	})
+	return userID, nil
+}
