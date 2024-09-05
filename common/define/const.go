@@ -1,13 +1,24 @@
 package define
 
 import (
-	"github.com/zachturing/util/config"
+	"os"
 	"time"
+
+	"github.com/zachturing/util/config"
+	"github.com/zachturing/util/log"
 )
 
-const (
+var (
 	Env = config.DevEnv
 )
+
+func init() {
+	env := os.Getenv("ENV")
+	if len(env) > 0 {
+		Env = config.EnvType(env)
+	}
+	log.Infof("ENV is %v", Env)
+}
 
 const (
 	// SMSCodeExpiredTime 短信验证码过期时间
