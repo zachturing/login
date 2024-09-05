@@ -10,7 +10,7 @@ import (
 )
 
 // 指定加密密钥
-var jwtSecret = []byte("speaker_dev")
+var jwtSecret = []byte("mix_paper_dev")
 
 func init() {
 	tmpSecret := os.Getenv("JWT_SECRET_KEY")

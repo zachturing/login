@@ -365,6 +365,8 @@ github.com/yuin/gopher-lua v0.0.0-20220504180219-658193537a64 h1:5mLPGnFdSsevFRF
 github.com/yuin/gopher-lua v0.0.0-20220504180219-658193537a64/go.mod h1:GBR0iDaNXjAgGg9zfCvksxSRnQx76gclCIb7kdAd1Pw=
 github.com/zachturing/util v0.0.0-20240904145813-58ce9b595ce7 h1:9bEwuffiZ2gRZHZdQ1mXCX9c4WrLC+15sU1lgGBDyOw=
 github.com/zachturing/util v0.0.0-20240904145813-58ce9b595ce7/go.mod h1:IHC/T8GLbNW/wFrT+mhV5jB3hjEA8Pq+bXkNexfuxN4=
+github.com/zachturing/util v0.0.0-20240905144211-79bf9ae5ada3 h1:nF9BiudjwdgpS+5zLkxzSondxCvAFBSnBe0nfzxd9l4=
+github.com/zachturing/util v0.0.0-20240905144211-79bf9ae5ada3/go.mod h1:IHC/T8GLbNW/wFrT+mhV5jB3hjEA8Pq+bXkNexfuxN4=
 go.etcd.io/etcd/api/v3 v3.5.0/go.mod h1:cbVKeC6lCfl7j/8jBhAK6aIYO9XOjdptoxU/nLQcPvs=
 go.etcd.io/etcd/client/pkg/v3 v3.5.0/go.mod h1:IJHfcCEKxYu1Os13ZdwCwIUTUVGYTSAM3YSwc9/Ac1g=
 go.etcd.io/etcd/client/v2 v2.305.0/go.mod h1:h9puh54ZTgAKtEbut2oe9P4L/oqKCVB6xsXlzd7alYQ=
