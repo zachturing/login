@@ -4,7 +4,7 @@ go 1.21.0
 
 require (
 	github.com/gin-gonic/gin v1.10.0
-	github.com/zachturing/util v0.0.0-20240905144211-79bf9ae5ada3
+	github.com/zachturing/util v0.0.0-20240919140441-3fd7df5cfd83
 )
 
 require (
