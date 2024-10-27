@@ -66,9 +66,9 @@ func LoginPhone(c *gin.Context) {
 
 // registerUser 注册成功返回user_id
 func registerUser(phone string) (int, error) {
-	var userID int
-	mysql.GetGlobalDBIns().Transaction(func(tx *gorm.DB) error {
-		user := model.User{
+	var user model.User
+	err := mysql.GetGlobalDBIns().Transaction(func(tx *gorm.DB) error {
+		user = model.User{
 			Phone:            phone,
 			RegistrationTime: time.Now(),
 			LastLoginTime:    time.Now(),
@@ -76,5 +76,10 @@ func registerUser(phone string) (int, error) {
 
 		return model.CreateUser(&user)
 	})
-	return userID, nil
+	if err != nil {
+		log.Errorf("register user %v failed, err:%v", phone, err)
+		return 0, err
+	}
+
+	return int(user.ID), nil
 }
