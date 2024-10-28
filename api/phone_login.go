@@ -22,6 +22,8 @@ type phoneParam struct {
 	Phone string `json:"phone" validate:"required,len=11"`
 	// 短信验证码
 	SMSCode string `json:"sms_code" validate:"required,len=6"`
+	// 用户的代理商，使用域名代替
+	SubDomain string `json:"subDomain"`
 }
 
 func LoginPhone(c *gin.Context) {
@@ -50,7 +52,7 @@ func LoginPhone(c *gin.Context) {
 		return
 	}
 
-	userID, err := registerUser(param.Phone)
+	userID, err := registerUser(param)
 	if err != nil {
 		log.Errorf("phone login: register user %v failed, err:%v", param.Phone, err)
 		xhttp.ServerError(c, define.RegisterFailed, define.MapCodeToMsg[define.RegisterFailed])
@@ -65,19 +67,21 @@ func LoginPhone(c *gin.Context) {
 }
 
 // registerUser 注册成功返回user_id
-func registerUser(phone string) (int, error) {
+func registerUser(param phoneParam) (int, error) {
 	var user model.User
 	err := mysql.GetGlobalDBIns().Transaction(func(tx *gorm.DB) error {
 		user = model.User{
-			Phone:            phone,
+			Phone:            param.Phone,
 			RegistrationTime: time.Now(),
 			LastLoginTime:    time.Now(),
+			Role:             define.ROLE_NORMAL,
+			SubDomain:        param.SubDomain, // 用户从哪个二级域名注册的，就绑定在哪个二级域名下，目前会根据二级域名区分代理商，www则为主域名
 		}
 
 		return model.CreateUser(&user)
 	})
 	if err != nil {
-		log.Errorf("register user %v failed, err:%v", phone, err)
+		log.Errorf("register user %v failed, err:%v", param.Phone, err)
 		return 0, err
 	}
 

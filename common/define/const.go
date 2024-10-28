@@ -27,3 +27,9 @@ const (
 	// TokenExpireTime token有效时间
 	TokenExpireTime = time.Hour * 24 * 7
 )
+
+const (
+	ROLE_NORMAL      = "LEVEL_NORMAL"      // 普通用户，注册默认是这个角色
+	ROLE_PROXY       = "LEVEL_PROXY"       // 代理商，申请之后会有审核
+	ROLE_SUPER_ADMIN = "LEVEL_SUPER_ADMIN" // 超级管理员
+)
