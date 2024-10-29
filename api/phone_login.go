@@ -23,7 +23,7 @@ type phoneParam struct {
 	// 短信验证码
 	SMSCode string `json:"sms_code" validate:"required,len=6"`
 	// 用户的代理商，使用域名代替
-	SubDomain string `json:"subDomain"`
+	SubDomain string `json:"sub_domain"`
 }
 
 func LoginPhone(c *gin.Context) {
