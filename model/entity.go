@@ -21,7 +21,7 @@ type Agent struct {
 	SubDomain  string    `json:"sub_domain"`  // 代理商二级域名
 	Verified   bool      `json:"verified"`    // 是否通过审核
 	DomainFlag bool      `json:"domain_flag"` // 是否已绑定二级域名
-	AgentLevel string    `json:"agent_level"` // 代理商等级，1-5级
+	AgentLevel int       `json:"agent_level"` // 代理商等级，1-5级
 	ParentId   int       `json:"parent_id"`   // 上级代理商ID
 }
 

@@ -71,7 +71,7 @@ func registerUser(param phoneParam) (int, error) {
 	var user model.User
 	err := mysql.GetGlobalDBIns().Transaction(func(tx *gorm.DB) error {
 		// 根据域名查询对应的代理商
-		domain, err := model.QueryAgentBySubDomain(param.SubDomain)
+		agent, err := model.QueryAgentBySubDomain(param.SubDomain)
 		if err != nil {
 			return err
 		}
@@ -80,7 +80,7 @@ func registerUser(param phoneParam) (int, error) {
 			RegistrationTime: time.Now(),
 			LastLoginTime:    time.Now(),
 			Role:             define.ROLE_NORMAL,
-			AgentId:          int(domain.ID),
+			AgentId:          int(agent.ID),
 		}
 
 		return model.CreateUser(&user)
