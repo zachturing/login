@@ -70,12 +70,17 @@ func LoginPhone(c *gin.Context) {
 func registerUser(param phoneParam) (int, error) {
 	var user model.User
 	err := mysql.GetGlobalDBIns().Transaction(func(tx *gorm.DB) error {
+		// 根据域名查询对应的代理商
+		domain, err := model.QueryAgentBySubDomain(param.SubDomain)
+		if err != nil {
+			return err
+		}
 		user = model.User{
 			Phone:            param.Phone,
 			RegistrationTime: time.Now(),
 			LastLoginTime:    time.Now(),
 			Role:             define.ROLE_NORMAL,
-			SubDomain:        param.SubDomain, // 用户从哪个二级域名注册的，就绑定在哪个二级域名下，目前会根据二级域名区分代理商，www则为主域名
+			AgentId:          int(domain.ID),
 		}
 
 		return model.CreateUser(&user)
