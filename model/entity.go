@@ -8,8 +8,9 @@ type User struct {
 	Phone            string    `json:"phone"`             // 手机号码
 	RegistrationTime time.Time `json:"registration_time"` // 注册时间
 	LastLoginTime    time.Time `json:"last_login_time"`   // 上一次登录时间
-	Role             string    `json:"role"`              // 用户角色，可以为空
-	AgentId          int       `json:"agent_id"`
+	Role             string    `json:"role"`              // 用户级别
+	Permission       string    `json:"permission"`        // 用户权限
+	AgentId          int       `json:"agent_id"`          // 用户所属的代理商ID
 }
 
 type Agent struct {

@@ -79,7 +79,8 @@ func registerUser(param phoneParam) (int, error) {
 			Phone:            param.Phone,
 			RegistrationTime: time.Now(),
 			LastLoginTime:    time.Now(),
-			Role:             define.ROLE_NORMAL,
+			Role:             define.LEVEL_NORMAL,
+			Permission:       define.PERMISSON_NORMAL,
 			AgentId:          int(agent.ID),
 		}
 

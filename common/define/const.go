@@ -28,8 +28,16 @@ const (
 	TokenExpireTime = time.Hour * 24 * 7
 )
 
+// 用户权限：普通用户、代理商、超管用户
 const (
-	ROLE_NORMAL      = "LEVEL_NORMAL"      // 普通用户，注册默认是这个角色
-	ROLE_PROXY       = "LEVEL_PROXY"       // 代理商，申请之后会有审核
-	ROLE_SUPER_ADMIN = "LEVEL_SUPER_ADMIN" // 超级管理员
+	PERMISSON_NORMAL      = "NORMAL"      // 普通用户，注册默认是这个角色
+	PERMISSON_PROXY       = "PROXY"       // 代理商，申请之后会有审核
+	PERMISSON_SUPER_ADMIN = "SUPER_ADMIN" // 超级管理员
+)
+
+// 用户级别，用于区分用户是普通用户、VIP用户，会在生成论文上走不通的算法模型
+const (
+	LEVEL_ANONYMOUS = "LEVEL_ANONYMOUS" // 目前已弃用，系统已经不支持未登录的用户生成大纲了
+	LEVEL_NORMAL    = "LEVEL_NORMAL"
+	LEVEL_VIP       = "LEVEL_VIP"
 )
