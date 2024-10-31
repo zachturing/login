@@ -31,7 +31,7 @@ const (
 // 用户权限：普通用户、代理商、超管用户
 const (
 	PERMISSON_NORMAL      = "NORMAL"      // 普通用户，注册默认是这个角色
-	PERMISSON_PROXY       = "PROXY"       // 代理商，申请之后会有审核
+	PERMISSON_AGENT       = "AGENT"       // 代理商，申请之后会有审核
 	PERMISSON_SUPER_ADMIN = "SUPER_ADMIN" // 超级管理员
 )
 
