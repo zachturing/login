@@ -24,6 +24,8 @@ type phoneParam struct {
 	SMSCode string `json:"sms_code" validate:"required,len=6"`
 	// 用户的代理商，使用域名代替
 	SubDomain string `json:"sub_domain"`
+	// 邀请码，可以为空
+	InvCode string `json:"inv_code"`
 }
 
 func LoginPhone(c *gin.Context) {
@@ -75,6 +77,8 @@ func registerUser(param phoneParam) (int, error) {
 		if err != nil {
 			return err
 		}
+
+		// 用户注册
 		user = model.User{
 			Phone:            param.Phone,
 			RegistrationTime: time.Now(),
@@ -83,8 +87,51 @@ func registerUser(param phoneParam) (int, error) {
 			Permission:       define.PERMISSON_NORMAL,
 			AgentId:          int(agent.ID),
 		}
+		err = model.CreateUser(&user)
+		if err != nil {
+			return err
+		}
 
-		return model.CreateUser(&user)
+		// 注册成功之后为该用户绑定一个唯一的邀请码
+		user.InvCode = util.GenerateInvCodeByUserId(uint64(user.ID))
+		err = model.UpdateUserInvCode(&user, tx)
+		if err != nil {
+			return err
+		}
+
+		// 赠送一次免费PaperYY查重
+		userRights := model.UserRights{
+			UserId:             user.ID,
+			DuplicateCheckNums: 1,
+			CreatedAt:          time.Now(),
+			UpdatedAt:          time.Now(),
+		}
+		err = model.CreateUserRights(&userRights, tx)
+		if err != nil {
+			return err
+		}
+
+		// 如果通过别人的邀请码链接进入，则为邀请人赠送一次查重权益
+		if param.InvCode != "" {
+			invUserId := util.DecodeInvCodeToUID(param.InvCode)
+			// 查询邀请人的权益
+			invUserRights, err := model.QueryUserRightsByUserId(int(invUserId))
+			if err == nil {
+				invUserRights.DuplicateCheckNums += 1
+			}
+			// 如果没有查到邀请人的权益记录，则插入一条新的权益记录
+			if invUserRights == nil {
+				invUserRights = &model.UserRights{
+					UserId:             int64(invUserId),
+					DuplicateCheckNums: 1,
+					CreatedAt:          time.Now(),
+					UpdatedAt:          time.Now(),
+				}
+			}
+			return model.SaveUserRights(invUserRights, tx)
+		}
+
+		return nil
 	})
 	if err != nil {
 		log.Errorf("register user %v failed, err:%v", param.Phone, err)

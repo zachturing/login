@@ -57,3 +57,80 @@ func ParseToken(token string) (*Claims, error) {
 	}
 	return nil, err
 }
+
+// AlphanumericSet 自定义字符集，去除了容易混淆的字符
+var AlphanumericSet = []rune{
+	'2', '3', '4', '5', '6', '7', '8', '9',
+	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+}
+
+// GenerateInvCodeByUserId 获取指定长度的邀请码，默认为6位
+func GenerateInvCodeByUserId(uid uint64) string {
+	// 放大 + 加盐
+	uid = uid*define.PRIME1 + define.SALT
+	// 邀请码长度默认为6位
+	l := define.DefaultInvCodeLength
+
+	var code []rune
+	slIdx := make([]byte, l)
+
+	// 扩散
+	for i := 0; i < l; i++ {
+		slIdx[i] = byte(uid % uint64(len(AlphanumericSet)))                   // 获取 52 进制的每一位值
+		slIdx[i] = (slIdx[i] + byte(i)*slIdx[0]) % byte(len(AlphanumericSet)) // 其他位与个位加和再取余（让个位的变化影响到所有位）
+		uid = uid / uint64(len(AlphanumericSet))                              // 相当于右移一位（52进制）
+	}
+
+	// 混淆
+	for i := 0; i < l; i++ {
+		idx := (byte(i) * define.PRIME2) % byte(l)
+		code = append(code, AlphanumericSet[slIdx[idx]])
+	}
+	return string(code)
+}
+
+func invertAlphanumericMap() map[rune]byte {
+	inverseMap := make(map[rune]byte)
+	for i, r := range AlphanumericSet {
+		inverseMap[r] = byte(i)
+	}
+	return inverseMap
+}
+
+// DecodeInvCodeToUID 根据邀请码解析出userId，返回值为0说明邀请码不存在
+func DecodeInvCodeToUID(code string) uint64 {
+	l := len(code)
+	if l == 0 {
+		return 0
+	}
+
+	inverseMap := invertAlphanumericMap()
+
+	// 反混淆
+	slIdx := make([]byte, l)
+	for i, r := range code {
+		idx, ok := inverseMap[r]
+		if !ok {
+			return 0
+		}
+		slIdx[(byte(i)*define.PRIME2)%byte(l)] = idx
+	}
+
+	// 反扩散
+	var uid uint64
+	for i := l - 1; i >= 0; i-- {
+		if i > 0 {
+			slIdx[i] = (slIdx[i] + byte(len(AlphanumericSet)) - byte(i)*slIdx[0]%byte(len(AlphanumericSet))) % byte(len(AlphanumericSet))
+		}
+		uid = uid*uint64(len(AlphanumericSet)) + uint64(slIdx[i])
+	}
+
+	// 去盐
+	if uid < define.SALT {
+		return 0
+	}
+	uid = (uid - define.SALT) / define.PRIME1
+
+	return uid
+}

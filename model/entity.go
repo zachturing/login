@@ -11,6 +11,7 @@ type User struct {
 	Role             string    `json:"role"`              // 用户级别
 	Permission       string    `json:"permission"`        // 用户权限
 	AgentId          int       `json:"agent_id"`          // 用户所属的代理商ID
+	InvCode          string    `json:"inv_code"`          // 用户邀请码，根据userId生成，每个用户唯一
 }
 
 type Agent struct {
@@ -24,6 +25,14 @@ type Agent struct {
 	DomainFlag bool      `json:"domain_flag"` // 是否已绑定二级域名
 	AgentLevel int       `json:"agent_level"` // 代理商等级，1-5级
 	ParentId   int       `json:"parent_id"`   // 上级代理商ID
+}
+
+type UserRights struct {
+	ID                 int64     `json:"id"`                   // 权益表的Id，自增
+	UserId             int64     `json:"user_id"`              // 用户ID
+	DuplicateCheckNums int       `json:"duplicate_check_nums"` // PaperYY免费查重次数，每次限制1W字
+	CreatedAt          time.Time `json:"created_at"`           // 创建时间
+	UpdatedAt          time.Time `json:"updated_at"`           // 更新时间
 }
 
 func (u *User) TableName() string {

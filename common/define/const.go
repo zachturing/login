@@ -41,3 +41,11 @@ const (
 	LEVEL_NORMAL    = "LEVEL_NORMAL"
 	LEVEL_VIP       = "LEVEL_VIP"
 )
+
+// 用户邀请码
+const (
+	PRIME1               = 3         // 与56互质
+	PRIME2               = 5         // 与邀请码长度 6 互质
+	SALT                 = 123456789 // 随意一个数值
+	DefaultInvCodeLength = 6         // 邀请码长度，默认为6，请勿改动，邀请码的实现算法考虑到了互质的关系
+)

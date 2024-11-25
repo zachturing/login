@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"gorm.io/gorm"
 
 	"github.com/zachturing/util/database/mysql"
 )
@@ -22,4 +23,16 @@ func QueryUser(phone string) (*User, error) {
 		return nil, fmt.Errorf("phone:%v not exist", phone)
 	}
 	return user, nil
+}
+
+func UpdateUserInvCode(user *User, tx *gorm.DB) error {
+	if tx != nil {
+		return tx.Model(&User{}).
+			Where("id = ?", user.ID).
+			Update("inv_code", user.InvCode).Error
+	}
+	return mysql.GetGlobalDBIns().
+		Model(&User{}).
+		Where("id = ?", user.ID).
+		Update("inv_code", user.InvCode).Error
 }
