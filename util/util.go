@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -99,10 +100,10 @@ func invertAlphanumericMap() map[rune]byte {
 }
 
 // DecodeInvCodeToUID 根据邀请码解析出userId，返回值为0说明邀请码不存在
-func DecodeInvCodeToUID(code string) uint64 {
+func DecodeInvCodeToUID(code string) (uint64, error) {
 	l := len(code)
 	if l == 0 {
-		return 0
+		return 0, fmt.Errorf("inv code is empty")
 	}
 
 	inverseMap := invertAlphanumericMap()
@@ -112,7 +113,7 @@ func DecodeInvCodeToUID(code string) uint64 {
 	for i, r := range code {
 		idx, ok := inverseMap[r]
 		if !ok {
-			return 0
+			return 0, fmt.Errorf("inv code is invalid")
 		}
 		slIdx[(byte(i)*define.PRIME2)%byte(l)] = idx
 	}
@@ -128,9 +129,9 @@ func DecodeInvCodeToUID(code string) uint64 {
 
 	// 去盐
 	if uid < define.SALT {
-		return 0
+		return 0, fmt.Errorf("inv code is invalid")
 	}
 	uid = (uid - define.SALT) / define.PRIME1
 
-	return uid
+	return uid, nil
 }

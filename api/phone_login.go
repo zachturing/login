@@ -113,12 +113,17 @@ func registerUser(param phoneParam) (int, error) {
 
 		// 如果通过别人的邀请码链接进入，则为邀请人赠送一次查重权益
 		if param.InvCode != "" {
-			invUserId := util.DecodeInvCodeToUID(param.InvCode)
+			invUserId, err := util.DecodeInvCodeToUID(param.InvCode)
+			if err != nil {
+				return err
+			}
+
 			// 查询邀请人的权益
 			invUserRights, err := model.QueryUserRightsByUserId(int(invUserId))
 			if err == nil {
 				invUserRights.DuplicateCheckNums += 1
 			}
+
 			// 如果没有查到邀请人的权益记录，则插入一条新的权益记录
 			if invUserRights == nil {
 				invUserRights = &model.UserRights{
