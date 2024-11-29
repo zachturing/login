@@ -30,7 +30,9 @@ type Agent struct {
 type UserRights struct {
 	ID                 int64     `json:"id"`                   // 权益表的Id，自增
 	UserId             int64     `json:"user_id"`              // 用户ID
+	InvUsers           int       `json:"inv_users"`            // 用户已邀请的人数
 	DuplicateCheckNums int       `json:"duplicate_check_nums"` // PaperYY免费查重次数，每次限制1W字
+	UsedCheckNums      int       `json:"used_check_nums"`      // 已使用的查重次数
 	CreatedAt          time.Time `json:"created_at"`           // 创建时间
 	UpdatedAt          time.Time `json:"updated_at"`           // 更新时间
 }

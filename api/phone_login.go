@@ -121,6 +121,7 @@ func registerUser(param phoneParam) (int, error) {
 			// 查询邀请人的权益
 			invUserRights, err := model.QueryUserRightsByUserId(int(invUserId))
 			if err == nil {
+				invUserRights.InvUsers += 1
 				invUserRights.DuplicateCheckNums += 1
 			}
 
@@ -128,6 +129,7 @@ func registerUser(param phoneParam) (int, error) {
 			if invUserRights == nil {
 				invUserRights = &model.UserRights{
 					UserId:             int64(invUserId),
+					InvUsers:           1,
 					DuplicateCheckNums: 1,
 					CreatedAt:          time.Now(),
 					UpdatedAt:          time.Now(),
