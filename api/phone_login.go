@@ -102,7 +102,9 @@ func registerUser(param phoneParam) (int, error) {
 		// 赠送一次免费PaperYY查重
 		userRights := model.UserRights{
 			UserId:             user.ID,
+			InvUsers:           0,
 			DuplicateCheckNums: 1,
+			UsedCheckNums:      0,
 			CreatedAt:          time.Now(),
 			UpdatedAt:          time.Now(),
 		}
