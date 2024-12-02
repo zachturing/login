@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -33,14 +32,14 @@ func LoginPhone(c *gin.Context) {
 	err := c.ShouldBindJSON(&param)
 	if err != nil {
 		log.Errorf("login phone: invalid param:%v, err:%v", param, err)
-		xhttp.ParamsError(c, fmt.Errorf("login phone: invalid param:%v, err:%v", param, err))
+		xhttp.DiyOkCode(c, define.ErrInvalidParams, define.MapCodeToMsg[define.ErrInvalidParams])
 		return
 	}
 
 	smsCode := redis.GetGlobalClient().Get(context.TODO(), smsKey(param.Phone)).Val()
 	if smsCode != param.SMSCode {
 		log.Errorf("login phone: %v, origin sms code not match %v->%v", param.Phone, param.SMSCode, smsCode)
-		xhttp.ParamsError(c, fmt.Errorf("invalid sms code"))
+		xhttp.DiyOkCode(c, define.SMSCodeInvalid, define.MapCodeToMsg[define.SMSCodeInvalid])
 		return
 	}
 
@@ -57,7 +56,7 @@ func LoginPhone(c *gin.Context) {
 	userID, err := registerUser(param)
 	if err != nil {
 		log.Errorf("phone login: register user %v failed, err:%v", param.Phone, err)
-		xhttp.ServerError(c, define.RegisterFailed, define.MapCodeToMsg[define.RegisterFailed])
+		xhttp.DiyOkCode(c, define.RegisterFailed, define.MapCodeToMsg[define.RegisterFailed])
 		return
 	}
 	token, _ := util.GenerateToken(userID)

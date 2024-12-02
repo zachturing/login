@@ -24,20 +24,21 @@ func SendSMS(c *gin.Context) {
 
 	if err := validator.New().Struct(param); err != nil {
 		log.Errorf("invalid param:%v, err:%v", param, err)
-		xhttp.ParamsError(c, err)
+		xhttp.DiyOkCode(c, define.ErrInvalidParams, define.MapCodeToMsg[define.ErrInvalidParams])
 		return
 	}
 
 	smsCode, err := sms.Send(param.Phone)
 	if err != nil {
 		log.Errorf("send sms to phone:%v failed, err:%v", param.Phone, err)
-		xhttp.ServerError(c, define.InvalidPhone, define.MapCodeToMsg[define.InvalidPhone])
+		xhttp.DiyOkCode(c, define.InvalidPhone, define.MapCodeToMsg[define.InvalidPhone])
 		return
 	}
 
 	cmd := redis.GetGlobalClient().Set(context.TODO(), smsKey(param.Phone), smsCode, define.SMSCodeExpiredTime)
 	if cmd.Err() != nil {
-		xhttp.ServerError(c, define.SMSCodeSetRedisFailed, define.MapCodeToMsg[define.SMSCodeSetRedisFailed])
+		log.Errorf("set redis key:%v failed, err:%v", smsKey(param.Phone), cmd.Err())
+		xhttp.DiyOkCode(c, define.SendSMSCodeFailed, define.MapCodeToMsg[define.SendSMSCodeFailed])
 		return
 	}
 

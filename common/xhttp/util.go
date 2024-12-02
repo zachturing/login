@@ -58,3 +58,11 @@ func ClientError(c *gin.Context, code int, msg string) {
 func ParamsError(c *gin.Context, err error) {
 	ClientError(c, define.ErrInvalidParams, define.MsgInvalidParams+":"+err.Error())
 }
+
+func DiyOkCode(c *gin.Context, code int, msg string) {
+	c.JSON(http.StatusOK, &BaseResponse{
+		Code:   code,
+		Msg:    msg,
+		Result: nil,
+	})
+}
