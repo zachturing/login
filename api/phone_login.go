@@ -25,6 +25,8 @@ type phoneParam struct {
 	SubDomain string `json:"sub_domain"`
 	// 邀请码，可以为空
 	InvCode string `json:"inv_code"`
+	// 百度的数据回传接口需要的code
+	BdVid string `json:"bd_vid"`
 }
 
 func LoginPhone(c *gin.Context) {
@@ -43,8 +45,9 @@ func LoginPhone(c *gin.Context) {
 		return
 	}
 
+	// 用户已存在，登录成功，直接返回
 	user, err := model.QueryUser(param.Phone)
-	if err == nil { // 查到，则登录成功，直接返回
+	if err == nil {
 		token, _ := util.GenerateToken(int(user.ID))
 		log.Debugf("phone login: user:%v success", user.Phone)
 		xhttp.Data(c, map[string]string{
@@ -53,12 +56,19 @@ func LoginPhone(c *gin.Context) {
 		return
 	}
 
+	// 用户注册
 	userID, err := registerUser(param)
 	if err != nil {
 		log.Errorf("phone login: register user %v failed, err:%v", param.Phone, err)
 		xhttp.DiyOkCode(c, define.RegisterFailed, define.MapCodeToMsg[define.RegisterFailed])
 		return
 	}
+	// 注册完成调用百度推广的数据回传接口，调用失败记录日志，不要抛错
+	err = CallBaiduUploadConvertData(param.BdVid)
+	if err != nil {
+		log.Errorf("user register: call baidu upload convert data %v failed, err:%v", param.BdVid, err)
+	}
+	// 生成token
 	token, _ := util.GenerateToken(userID)
 	log.Debugf("phone login: register success, phone:%v, userID:%v", param.Phone, userID)
 	xhttp.Data(c, map[string]string{

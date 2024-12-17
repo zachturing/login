@@ -49,3 +49,8 @@ const (
 	SALT                 = 123456789 // 随意一个数值
 	DefaultInvCodeLength = 6         // 邀请码长度，默认为6，请勿改动，邀请码的实现算法考虑到了互质的关系
 )
+
+const (
+	BaiduAPIURL   = "https://ocpc.baidu.com/ocpcapi/api/uploadConvertData"
+	BaiduApiToken = "0FKgl3lVEe0FCnVO7E8J4fG19jO1kH1t@jMcYhBnhQcwjxInk2Acvqhp1B9fF8ewz"
+)
