@@ -65,7 +65,7 @@ func prepareBaiduUploadData(baiduVid, apiToken string) BaiduUploadConvertData {
 			AttributeSource int    `json:"attributeSource"`
 		}{
 			{
-				LogidUrl:        fmt.Sprintf("https://www.mixpaper.cn?bd_vid=%s", baiduVid),
+				LogidUrl:        fmt.Sprintf("https://sjzdl.mixpaper.cn?bd_vid=%s", baiduVid),
 				NewType:         25, // 百度定义的类型，25-注册
 				AttributeSource: 0,
 			},
