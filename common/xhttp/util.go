@@ -10,7 +10,7 @@ import (
 // BaseResponse 基础response
 type BaseResponse struct {
 	Code   int         `json:"code"`
-	Msg    string      `json:"msg"`
+	Msg    string      `json:"message"`
 	Result interface{} `json:"result"`
 }
 
