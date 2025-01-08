@@ -8,12 +8,13 @@ import (
 
 func TestGenerateToken(t *testing.T) {
 	userID := 186
-	token, err := GenerateToken(userID)
+	token, expiredTimeStamp, err := GenerateToken(userID)
 	if err != nil {
 		t.Errorf("generate token failed, err:%v", err)
 		return
 	}
 	t.Logf("token:%s", token)
+	t.Logf("expiredTimeStamp:%d", expiredTimeStamp)
 	claims, err := ParseToken(token)
 	if err != nil {
 		t.Errorf("parse token failed, err:%v", err)

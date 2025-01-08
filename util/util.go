@@ -27,19 +27,23 @@ type Claims struct {
 }
 
 // GenerateToken 根据用户的用户名和密码产生token
-func GenerateToken(userID int) (string, error) {
+func GenerateToken(userID int) (string, int64, error) {
+	expiredTime := time.Now().Add(define.TokenExpireTime)
+	// 生成时间戳
+	expiredTimeStamp := expiredTime.Unix()
 	claims := Claims{
 		UserID: userID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   strconv.Itoa(userID),
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(define.TokenExpireTime)),
+			ExpiresAt: jwt.NewNumericDate(expiredTime),
 		},
 	}
 
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	// 该方法内部生成签名字符串，再用于获取完整、已签名的token
 	token, err := tokenClaims.SignedString(jwtSecret)
-	return token, err
+
+	return token, expiredTimeStamp, err
 }
 
 // ParseToken 根据传入的token值获取到Claims对象信息（进而获取其中的用户id）

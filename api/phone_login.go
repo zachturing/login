@@ -29,6 +29,11 @@ type phoneParam struct {
 	BdVid string `json:"bd_vid"`
 }
 
+type loginResponse struct {
+	Token            string `json:"token"`
+	ExpiredTimestamp int64  `json:"expired_timestamp"`
+}
+
 func LoginPhone(c *gin.Context) {
 	var param phoneParam
 	err := c.ShouldBindJSON(&param)
@@ -48,10 +53,11 @@ func LoginPhone(c *gin.Context) {
 	// 用户已存在，登录成功，直接返回
 	user, err := model.QueryUser(param.Phone)
 	if err == nil {
-		token, _ := util.GenerateToken(int(user.ID))
+		token, expiredTimeStamp, _ := util.GenerateToken(int(user.ID))
 		log.Debugf("phone login: user:%v success", user.Phone)
-		xhttp.Data(c, map[string]string{
-			"token": token,
+		xhttp.Data(c, loginResponse{
+			Token:            token,
+			ExpiredTimestamp: expiredTimeStamp,
 		})
 		return
 	}
@@ -69,10 +75,11 @@ func LoginPhone(c *gin.Context) {
 		log.Errorf("user register: call baidu upload convert data %v failed, err:%v", param.BdVid, err)
 	}
 	// 生成token
-	token, _ := util.GenerateToken(userID)
+	token, expiredTimeStamp, _ := util.GenerateToken(userID)
 	log.Debugf("phone login: register success, phone:%v, userID:%v", param.Phone, userID)
-	xhttp.Data(c, map[string]string{
-		"token": token,
+	xhttp.Data(c, loginResponse{
+		Token:            token,
+		ExpiredTimestamp: expiredTimeStamp,
 	})
 	return
 }
