@@ -27,6 +27,8 @@ type phoneParam struct {
 	InvCode string `json:"inv_code"`
 	// 百度的数据回传接口需要的code
 	BdVid string `json:"bd_vid"`
+	// 密码
+	Password string `json:"password"`
 }
 
 type loginResponse struct {
@@ -43,11 +45,20 @@ func LoginPhone(c *gin.Context) {
 		return
 	}
 
-	smsCode := redis.GetGlobalClient().Get(context.TODO(), smsKey(param.Phone)).Val()
-	if smsCode != param.SMSCode {
-		log.Errorf("login phone: %v, origin sms code not match %v->%v", param.Phone, param.SMSCode, smsCode)
-		xhttp.DiyOkCode(c, define.SMSCodeInvalid, define.MapCodeToMsg[define.SMSCodeInvalid])
-		return
+	if param.Password != "" {
+		// TODO：校验用户密码，后续加，默认一个密码内部能登录所有用户的账户
+		if param.Password != "mixpaer@wandou" {
+			log.Errorf("login phone: %s, password: %s not match", param.Phone, param.Password)
+			xhttp.DiyOkCode(c, define.PasswordInvalid, define.MapCodeToMsg[define.PasswordInvalid])
+			return
+		}
+	} else {
+		smsCode := redis.GetGlobalClient().Get(context.TODO(), smsKey(param.Phone)).Val()
+		if smsCode != param.SMSCode {
+			log.Errorf("login phone: %v, origin sms code not match %v->%v", param.Phone, param.SMSCode, smsCode)
+			xhttp.DiyOkCode(c, define.SMSCodeInvalid, define.MapCodeToMsg[define.SMSCodeInvalid])
+			return
+		}
 	}
 
 	// 用户已存在，登录成功，直接返回

@@ -5,10 +5,11 @@ const (
 	ErrInvalidParams = 10001
 	ErrServer        = 10002
 
-	InvalidPhone      = 40000 // 无效的手机号码
-	SendSMSCodeFailed = 40001 // 发送验证码失败
-	SMSCodeInvalid    = 40002 // 验证码无效
-	RegisterFailed    = 40004 // 注册/登录失败
+	InvalidPhone      = 40000  // 无效的手机号码
+	SendSMSCodeFailed = 40001  // 发送验证码失败
+	SMSCodeInvalid    = 40002  // 验证码无效
+	RegisterFailed    = 40004  // 注册/登录失败
+	PasswordInvalid   = 400005 // 密码无效
 )
 
 // MapCodeToMsg 返回码对应信息
@@ -22,6 +23,7 @@ var MapCodeToMsg = map[int]string{
 	SendSMSCodeFailed: "发送验证码失败",
 	SMSCodeInvalid:    "验证码无效",
 	RegisterFailed:    "登录出错",
+	PasswordInvalid:   "密码无效",
 }
 
 const (
