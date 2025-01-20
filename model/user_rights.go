@@ -16,10 +16,9 @@ func CreateUserRights(userRights *UserRights, tx *gorm.DB) error {
 	return mysql.GetGlobalDBIns().Create(userRights).Error
 }
 
-func QueryUserRightsByUserId(userID int) (*UserRights, error) {
+func QueryUserRightsByUserId(userID int, tx *gorm.DB) (*UserRights, error) {
 	var userRights UserRights
-	tx := mysql.GetGlobalDBIns().Where("user_id = ?", userID).First(&userRights)
-	if tx.RowsAffected != 1 {
+	if tx.Where("user_id = ?", userID).First(&userRights).RowsAffected != 1 {
 		return nil, fmt.Errorf("userId:%v not exist", userID)
 	}
 	return &userRights, nil

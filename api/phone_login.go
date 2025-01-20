@@ -2,6 +2,8 @@ package api
 
 import (
 	"context"
+	"github.com/shopspring/decimal"
+	"github.com/zachturing/login/model/wallet_model"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -100,7 +102,7 @@ func registerUser(param phoneParam) (int, error) {
 	var user model.User
 	err := mysql.GetGlobalDBIns().Transaction(func(tx *gorm.DB) error {
 		// 根据域名查询对应的代理商
-		agent, err := model.QueryAgentBySubDomain(param.SubDomain)
+		agent, err := model.QueryAgentBySubDomain(param.SubDomain, tx)
 		if err != nil {
 			return err
 		}
@@ -114,15 +116,26 @@ func registerUser(param phoneParam) (int, error) {
 			Permission:       define.PERMISSON_NORMAL,
 			AgentId:          int(agent.ID),
 		}
-		err = model.CreateUser(&user)
-		if err != nil {
+		if err = model.CreateUser(&user, tx); err != nil {
+			return err
+		}
+
+		// 创建积分账户
+		account := wallet_model.Account{
+			UserID:    int(user.ID),
+			Currency:  define.CurrencyCNY,
+			Balance:   decimal.NewFromInt(0),
+			Status:    define.AccountStatusActive,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		}
+		if err = wallet_model.CreateAccount(&account, tx); err != nil {
 			return err
 		}
 
 		// 注册成功之后为该用户绑定一个唯一的邀请码
 		user.InvCode = util.GenerateInvCodeByUserId(uint64(user.ID))
-		err = model.UpdateUserInvCode(&user, tx)
-		if err != nil {
+		if err = model.UpdateUserInvCode(&user, tx); err != nil {
 			return err
 		}
 
@@ -135,8 +148,7 @@ func registerUser(param phoneParam) (int, error) {
 			CreatedAt:          time.Now(),
 			UpdatedAt:          time.Now(),
 		}
-		err = model.CreateUserRights(&userRights, tx)
-		if err != nil {
+		if err = model.CreateUserRights(&userRights, tx); err != nil {
 			return err
 		}
 
@@ -148,7 +160,7 @@ func registerUser(param phoneParam) (int, error) {
 			}
 
 			// 查询邀请人的权益
-			invUserRights, err := model.QueryUserRightsByUserId(int(invUserId))
+			invUserRights, err := model.QueryUserRightsByUserId(int(invUserId), tx)
 			if err == nil {
 				invUserRights.InvUsers += 1
 				invUserRights.DuplicateCheckNums += 1

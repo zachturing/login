@@ -2,14 +2,13 @@ package model
 
 import (
 	"fmt"
-	"github.com/zachturing/util/database/mysql"
+	"gorm.io/gorm"
 )
 
-func QueryAgentBySubDomain(subDomain string) (*Agent, error) {
-	agent := new(Agent)
-	tx := mysql.GetGlobalDBIns().Where("sub_domain = ?", subDomain).First(agent)
-	if tx.RowsAffected != 1 {
+func QueryAgentBySubDomain(subDomain string, tx *gorm.DB) (*Agent, error) {
+	var agent Agent
+	if tx.Where("sub_domain = ?", subDomain).First(&agent).RowsAffected != 1 {
 		return nil, fmt.Errorf("sub_domain:%v not exist", subDomain)
 	}
-	return agent, nil
+	return &agent, nil
 }

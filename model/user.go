@@ -8,11 +8,11 @@ import (
 )
 
 // CreateUser 创建用户
-func CreateUser(user *User) error {
+func CreateUser(user *User, tx *gorm.DB) error {
 	if user == nil {
 		return fmt.Errorf("avatar nil")
 	}
-	return mysql.GetGlobalDBIns().Create(user).Error
+	return tx.Create(user).Error
 }
 
 // QueryUser 根据手机号查询用户
