@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
+	"github.com/zachturing/login/redis"
 
 	"github.com/gin-gonic/gin"
 	"github.com/newdee/aipaper-util/config"
 	"github.com/newdee/aipaper-util/config/business/common"
 	"github.com/newdee/aipaper-util/database/mysql"
-	"github.com/newdee/aipaper-util/database/redis"
 	"github.com/newdee/aipaper-util/log"
 	"github.com/zachturing/login/api"
 	"github.com/zachturing/login/common/define"
