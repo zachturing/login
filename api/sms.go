@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/newdee/aipaper-util/log"
+	"github.com/newdee/aipaper-util/sms"
 	"github.com/zachturing/login/common/define"
 	"github.com/zachturing/login/common/xhttp"
-	"github.com/zachturing/util/database/redis"
-	"github.com/zachturing/util/log"
-	"github.com/zachturing/util/sms"
+	"github.com/zachturing/login/redis"
 )
 
 type smsParam struct {

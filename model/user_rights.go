@@ -2,7 +2,7 @@ package model
 
 import (
 	"fmt"
-	"github.com/zachturing/util/database/mysql"
+	"github.com/newdee/aipaper-util/database/mysql"
 	"gorm.io/gorm"
 )
 

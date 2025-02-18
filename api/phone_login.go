@@ -7,13 +7,13 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/newdee/aipaper-util/database/mysql"
+	"github.com/newdee/aipaper-util/database/redis"
+	"github.com/newdee/aipaper-util/log"
 	"github.com/zachturing/login/common/define"
 	"github.com/zachturing/login/common/xhttp"
 	"github.com/zachturing/login/model"
 	"github.com/zachturing/login/util"
-	"github.com/zachturing/util/database/mysql"
-	"github.com/zachturing/util/database/redis"
-	"github.com/zachturing/util/log"
 	"gorm.io/gorm"
 )
 

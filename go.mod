@@ -5,16 +5,17 @@ go 1.21.0
 require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-playground/validator/v10 v10.22.0
-	github.com/golang-jwt/jwt/v4 v4.5.0
+	github.com/golang-jwt/jwt/v4 v4.5.1
 	github.com/magiconair/properties v1.8.5
+	github.com/newdee/aipaper-util v0.0.0-20250208083529-2028c5c7d526
 	github.com/shopspring/decimal v1.4.0
 	github.com/zachturing/util v0.0.0-20240919140441-3fd7df5cfd83
-	gorm.io/gorm v1.25.5
+	gorm.io/gorm v1.25.11
 )
 
 require (
 	github.com/apistd/uni-go-sdk v0.0.2 // indirect
-	github.com/apolloconfig/agollo/v4 v4.3.1 // indirect
+	github.com/apolloconfig/agollo/v4 v4.4.0 // indirect
 	github.com/bradfitz/gomemcache v0.0.0-20230905024940-24af94b03874 // indirect
 	github.com/bytedance/sonic v1.11.6 // indirect
 	github.com/bytedance/sonic/loader v0.1.1 // indirect
@@ -52,9 +53,8 @@ require (
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
-	go.uber.org/atomic v1.7.0 // indirect
-	go.uber.org/multierr v1.6.0 // indirect
-	go.uber.org/zap v1.17.0 // indirect
+	go.uber.org/multierr v1.10.0 // indirect
+	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/arch v0.8.0 // indirect
 	golang.org/x/crypto v0.23.0 // indirect
 	golang.org/x/net v0.25.0 // indirect
@@ -64,5 +64,5 @@ require (
 	gopkg.in/ini.v1 v1.62.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gorm.io/driver/mysql v1.5.2 // indirect
+	gorm.io/driver/mysql v1.5.7 // indirect
 )

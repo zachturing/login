@@ -2,15 +2,15 @@ package main
 
 import (
 	"fmt"
+	"github.com/zachturing/login/redis"
 
 	"github.com/gin-gonic/gin"
+	"github.com/newdee/aipaper-util/config"
+	"github.com/newdee/aipaper-util/config/business/common"
+	"github.com/newdee/aipaper-util/database/mysql"
+	"github.com/newdee/aipaper-util/log"
 	"github.com/zachturing/login/api"
 	"github.com/zachturing/login/common/define"
-	"github.com/zachturing/util/config"
-	"github.com/zachturing/util/config/business/common"
-	"github.com/zachturing/util/database/mysql"
-	"github.com/zachturing/util/database/redis"
-	"github.com/zachturing/util/log"
 )
 
 func initService() error {
