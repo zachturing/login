@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/zachturing/util/log"
+	"github.com/newdee/aipaper-util/log"
 )
 
 var (

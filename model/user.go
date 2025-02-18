@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"gorm.io/gorm"
 
-	"github.com/zachturing/util/database/mysql"
+	"github.com/newdee/aipaper-util/database/mysql"
 )
 
 // CreateUser 创建用户

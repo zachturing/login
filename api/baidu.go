@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/newdee/aipaper-util/log"
 	"github.com/zachturing/login/common/define"
-	"github.com/zachturing/util/log"
 	"io"
 	"net/http"
 )

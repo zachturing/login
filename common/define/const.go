@@ -4,8 +4,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/zachturing/util/config"
-	"github.com/zachturing/util/log"
+	"github.com/newdee/aipaper-util/config"
+	"github.com/newdee/aipaper-util/log"
 )
 
 var (
