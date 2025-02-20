@@ -4,11 +4,11 @@ import (
 	"context"
 	"github.com/shopspring/decimal"
 	"github.com/zachturing/login/model/wallet_model"
+	"github.com/zachturing/login/redis"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/newdee/aipaper-util/database/mysql"
-	"github.com/newdee/aipaper-util/database/redis"
 	"github.com/newdee/aipaper-util/log"
 	"github.com/zachturing/login/common/define"
 	"github.com/zachturing/login/common/xhttp"
