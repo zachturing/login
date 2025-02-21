@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"github.com/newdee/aipaper-util/config"
 	"github.com/shopspring/decimal"
 	"github.com/zachturing/login/model/wallet_model"
 	"github.com/zachturing/login/redis"
@@ -72,6 +73,12 @@ func LoginPhone(c *gin.Context) {
 			Token:            token,
 			ExpiredTimestamp: expiredTimeStamp,
 		})
+		return
+	}
+
+	// 非生产环境禁止注册用户
+	if define.Env != config.ProdEnv {
+		xhttp.DiyOkCode(c, define.RegisterFailed, "非生产环境禁止新用户注册！")
 		return
 	}
 
