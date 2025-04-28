@@ -25,7 +25,7 @@ func GiftUserRights(userId int64, tx *gorm.DB) error {
 	}
 	return tx.Create(&UserReduceRights{
 		UserID:        userId,
-		RemainingNum:  10,
+		RemainingNum:  3,
 		UsedReduceNum: 0,
 	}).Error
 }
