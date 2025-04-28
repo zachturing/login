@@ -194,8 +194,8 @@ func registerUser(param phoneParam) (int, error) {
 		// 写入UserReduceLogs
 		if err = model.InsertUserReduceLogs(user.ID,
 			0,
-			10,
-			10,
+			3,
+			3,
 			define.ChangeReasonGift,
 			"",
 			"",
