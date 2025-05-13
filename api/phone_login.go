@@ -186,10 +186,10 @@ func registerUser(param phoneParam) (int, error) {
 			return model.SaveUserRights(invUserRights, tx)
 		}
 
-		// 新用户注册赠送10次降AIGC次数
-		//if err = model.GiftUserRights(user.ID, tx); err != nil {
-		//	return err
-		//}
+		// 新用户注册生成降AIGC次数权益表
+		if err = model.GiftUserRights(user.ID, tx); err != nil {
+			return err
+		}
 
 		// 写入UserReduceLogs
 		//if err = model.InsertUserReduceLogs(user.ID,
