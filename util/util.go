@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"strconv"
 	"time"
@@ -138,4 +139,10 @@ func DecodeInvCodeToUID(code string) (uint64, error) {
 	uid = (uid - define.SALT) / define.PRIME1
 
 	return uid, nil
+}
+
+// GenerateSMSCode 生成4位数短信验证码
+func GenerateSMSCode() string {
+	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
+	return fmt.Sprintf("%04v", rnd.Int31n(10000)) // 生成范围在 1000 到 9999 之间
 }

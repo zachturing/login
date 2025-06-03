@@ -30,7 +30,7 @@ func initRoute() *gin.Engine {
 	router := gin.Default()
 	group := router.Group("/api")
 	{
-		group.POST("/auth/sms", api.SendSMS)
+		group.POST("/auth/sms", api.SendTencentSMS)
 		group.POST("/auth/login/phone", api.LoginPhone)
 	}
 
