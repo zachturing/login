@@ -3,6 +3,7 @@ package config
 import "github.com/newdee/aipaper-util/config"
 
 type TencentSMSConfig struct {
+	Enable           bool   `json:"enable"`
 	TencentSecretId  string `json:"tencent_secret_id"`
 	TencentSecretKey string `json:"tencent_secret_key"`
 	SdkAppId         string `json:"sdk_app_id"`

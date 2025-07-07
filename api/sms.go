@@ -42,6 +42,12 @@ func SendTencentSMS(c *gin.Context) {
 		return
 	}
 
+	// 如果未开启腾讯云短信功能，则使用默认的短信服务
+	if !tencentCfg.Enable {
+		SendSMS(c)
+		return
+	}
+
 	// 生成smsCode
 	smsCode := util.GenerateSMSCode()
 
