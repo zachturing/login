@@ -3,8 +3,6 @@ package api
 import (
 	"context"
 	"github.com/newdee/aipaper-util/config"
-	"github.com/shopspring/decimal"
-	"github.com/zachturing/login/model/wallet_model"
 	"github.com/zachturing/login/redis"
 	"time"
 
@@ -69,6 +67,14 @@ func LoginPhone(c *gin.Context) {
 	if err == nil {
 		token, expiredTimeStamp, _ := util.GenerateToken(int(user.ID))
 		log.Debugf("phone login: user:%v success", user.Phone)
+
+		// 更新用户的登录时间
+		updatedColumns := map[string]interface{}{
+			"last_login_time": time.Now(),
+		}
+		if err = model.UpdateUserColumns(user.ID, updatedColumns, nil); err != nil {
+			log.Errorf("phone login: update user %v failed, err:%v", user.Phone, err)
+		}
 		xhttp.Data(c, loginResponse{
 			Token:            token,
 			ExpiredTimestamp: expiredTimeStamp,
@@ -114,7 +120,7 @@ func registerUser(param phoneParam) (int, error) {
 			return err
 		}
 
-		// 用户注册
+		// 新用户注册
 		user = model.User{
 			Phone:            param.Phone,
 			RegistrationTime: time.Now(),
@@ -123,88 +129,54 @@ func registerUser(param phoneParam) (int, error) {
 			Permission:       define.PERMISSON_NORMAL,
 			AgentId:          int(agent.ID),
 		}
+		// 根据入参中的邀请码解码获取邀请人ID
+		if inviteUserId, decodeError := util.DecodeInvCodeToUID(param.InvCode); decodeError == nil {
+			user.ParentUserId = int64(inviteUserId)
+		}
 		if err = model.CreateUser(&user, tx); err != nil {
 			return err
 		}
 
-		// 创建积分账户
-		account := wallet_model.Account{
-			UserID:    int(user.ID),
-			Currency:  define.CurrencyCNY,
-			Balance:   decimal.NewFromInt(0),
-			Status:    define.AccountStatusActive,
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		}
-		if err = wallet_model.CreateAccount(&account, tx); err != nil {
-			return err
-		}
-
-		// 注册成功之后为该用户绑定一个唯一的邀请码
-		user.InvCode = util.GenerateInvCodeByUserId(uint64(user.ID))
-		if err = model.UpdateUserInvCode(&user, tx); err != nil {
-			return err
-		}
-
-		// 赠送一次免费PaperYY查重
-		userRights := model.UserRights{
-			UserId:             user.ID,
-			InvUsers:           0,
-			DuplicateCheckNums: 1,
-			UsedCheckNums:      0,
+		// 创建分销商账户
+		var agentAccount = model.AgentAccount{
+			UserID:             user.ID,
+			Currency:           define.CurrencyCny,
+			Status:             define.AccountStatusNormal,
+			Balance:            0.0,
+			WithdrawnAmount:    0.0,
+			TotalIncome:        0.0,
+			DirectPercent:      0.2,
+			IndirectPercent:    0.0,
+			UserUpgradePercent: 0.0,
 			CreatedAt:          time.Now(),
 			UpdatedAt:          time.Now(),
 		}
-		if err = model.CreateUserRights(&userRights, tx); err != nil {
+		if err = model.CreateAgentAccount(&agentAccount, tx); err != nil {
 			return err
 		}
 
-		// 如果通过别人的邀请码链接进入，则为邀请人赠送一次查重权益
-		if param.InvCode != "" {
-			invUserId, err := util.DecodeInvCodeToUID(param.InvCode)
-			if err != nil {
-				return err
-			}
-
-			// 查询邀请人的权益
-			invUserRights, err := model.QueryUserRightsByUserId(int(invUserId), tx)
-			if err == nil {
-				invUserRights.InvUsers += 1
-				invUserRights.DuplicateCheckNums += 1
-			}
-
-			// 如果没有查到邀请人的权益记录，则插入一条新的权益记录
-			if invUserRights == nil {
-				invUserRights = &model.UserRights{
-					UserId:             int64(invUserId),
-					InvUsers:           1,
-					DuplicateCheckNums: 1,
-					CreatedAt:          time.Now(),
-					UpdatedAt:          time.Now(),
-				}
-			}
-			return model.SaveUserRights(invUserRights, tx)
+		// 生成当前用户的邀请码
+		updatedColumns := map[string]interface{}{
+			"inv_code": util.GenerateInvCodeByUserId(uint64(user.ID)),
 		}
-
-		// 新用户注册生成降AIGC次数权益表
-		if err = model.GiftUserRights(user.ID, tx); err != nil {
+		if err = model.UpdateUserColumns(user.ID, updatedColumns, tx); err != nil {
 			return err
 		}
 
-		// 写入UserReduceLogs
-		//if err = model.InsertUserReduceLogs(user.ID,
-		//	0,
-		//	3,
-		//	3,
-		//	define.ChangeReasonGift,
-		//	"",
-		//	"",
-		//	tx); err != nil {
-		//	return err
-		//}
+		// TODO：基于配置项赠送权益
 
+		// 新用户注册生成空的降AIGC权益记录
+		var userReduceRights = model.UserReduceRights{
+			UserID:        user.ID,
+			RemainingNum:  0,
+			UsedReduceNum: 0,
+		}
+		if err = model.CreateUserReduceRights(&userReduceRights, tx); err != nil {
+			return err
+		}
 		return nil
 	})
+
 	if err != nil {
 		log.Errorf("register user %v failed, err:%v", param.Phone, err)
 		return 0, err

@@ -5,9 +5,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateUserReduceRights(userReduceRights *UserReduceRights, tx *gorm.DB) error {
+func CreateAgentAccount(agentAccount *AgentAccount, tx *gorm.DB) error {
 	if tx == nil {
 		tx = mysql.GetGlobalDBIns()
 	}
-	return tx.Create(userReduceRights).Error
+	return tx.Create(agentAccount).Error
 }

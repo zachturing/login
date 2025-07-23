@@ -25,14 +25,12 @@ func QueryUser(phone string) (*User, error) {
 	return user, nil
 }
 
-func UpdateUserInvCode(user *User, tx *gorm.DB) error {
-	if tx != nil {
-		return tx.Model(&User{}).
-			Where("id = ?", user.ID).
-			Update("inv_code", user.InvCode).Error
+func UpdateUserColumns(userId int64, updateColumns map[string]interface{}, tx *gorm.DB) error {
+	if len(updateColumns) == 0 {
+		return nil
 	}
-	return mysql.GetGlobalDBIns().
-		Model(&User{}).
-		Where("id = ?", user.ID).
-		Update("inv_code", user.InvCode).Error
+	if tx == nil {
+		tx = mysql.GetGlobalDBIns()
+	}
+	return tx.Model(&User{}).Where("id = ?", userId).Updates(updateColumns).Error
 }
