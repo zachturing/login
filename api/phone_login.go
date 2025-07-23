@@ -123,6 +123,7 @@ func registerUser(param phoneParam) (int, error) {
 		// 新用户注册
 		user = model.User{
 			Phone:            param.Phone,
+			UserName:         util.GenerateUserName(param.Phone),
 			RegistrationTime: time.Now(),
 			LastLoginTime:    time.Now(),
 			Role:             define.LEVEL_NORMAL,
