@@ -10,7 +10,8 @@ type User struct {
 	LastLoginTime    time.Time `json:"last_login_time"`   // 上一次登录时间
 	Role             string    `json:"role"`              // 用户级别
 	Permission       string    `json:"permission"`        // 用户权限
-	AgentId          int       `json:"agent_id"`          // 用户所属的代理商ID
+	AgentId          int       `json:"agent_id"`          // 用户所属的代理商Id
+	ParentUserId     int64     `json:"parent_user_id"`    // 用户所属的邀请人Id
 	InvCode          string    `json:"inv_code"`          // 用户邀请码，根据userId生成，每个用户唯一
 }
 
@@ -27,6 +28,22 @@ type Agent struct {
 	ParentId   int       `json:"parent_id"`   // 上级代理商ID
 }
 
+// AgentAccount 分销商账户表
+type AgentAccount struct {
+	ID                 int64     `json:"id"`                   // 自增主键
+	UserID             int64     `json:"user_id"`              // user表id
+	Currency           string    `json:"currency"`             // 币种，CNY-人民币、USD-美元，默认：CNY
+	Balance            float64   `json:"balance"`              // 账户余额，两位小数
+	WithdrawnAmount    float64   `json:"withdrawn_amount"`     // 已提现金额，两位小数
+	TotalIncome        float64   `json:"total_income"`         // 总收益，两位小数
+	DirectPercent      float64   `json:"direct_percent"`       // 直推分成比例：默认20%
+	IndirectPercent    float64   `json:"indirect_percent"`     // 间推分成比例：默认10%
+	UserUpgradePercent float64   `json:"user_upgrade_percent"` // 直推的用户升级成为代理时，代理费分成：默认80%
+	Status             string    `json:"status"`               // 账户状态，ACTIVE-活跃、FROZEN-冻结、CLOSED-关闭，默认：ACTIVE
+	CreatedAt          time.Time `json:"created_at"`           // 账户创建时间
+	UpdatedAt          time.Time `json:"updated_at"`           // 账户更新时间
+}
+
 type UserRights struct {
 	ID                 int64     `json:"id"`                   // 权益表的Id，自增
 	UserId             int64     `json:"user_id"`              // 用户ID
@@ -37,6 +54,31 @@ type UserRights struct {
 	UpdatedAt          time.Time `json:"updated_at"`           // 更新时间
 }
 
+type UserReduceRights struct {
+	ID            int64     `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
+	UserID        int64     `gorm:"column:user_id;not null" json:"user_id"`
+	RemainingNum  int       `gorm:"column:remaining_num;not null" json:"remaining_num"`
+	UsedReduceNum int       `gorm:"column:used_reduce_num" json:"used_reduce_num"`
+	CreatedAt     time.Time `gorm:"column:created_at;not null;default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt     time.Time `gorm:"column:updated_at;not null;default:CURRENT_TIMESTAMP;autoUpdateTime" json:"updated_at"`
+}
+
 func (u *User) TableName() string {
 	return "user"
+}
+
+func (a *Agent) TableName() string {
+	return "agents"
+}
+
+func (a *AgentAccount) TableName() string {
+	return "agent_account"
+}
+
+func (u *UserRights) TableName() string {
+	return "user_rights"
+}
+
+func (u *UserReduceRights) TableName() string {
+	return "user_reduce_rights"
 }

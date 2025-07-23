@@ -29,12 +29,3 @@ var MapCodeToMsg = map[int]string{
 const (
 	MsgInvalidParams = "参数错误"
 )
-
-const (
-	CurrencyCNY = "CNY" // 人民币
-	CurrencyUSD = "USD" // 美元
-
-	AccountStatusActive  = "ACTIVE" // 资金账户状态：活跃
-	AccountStatusFrozen  = "FROZEN" // 资金账户状态：冻结
-	AccountStatusDeleted = "CLOSED" // 资金账户状态：关闭
-)

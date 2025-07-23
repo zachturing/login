@@ -55,9 +55,11 @@ const (
 	BaiduApiToken = "0FKgl3lVEe0FCnVO7E8J4fG19jO1kH1t@jMcYhBnhQcwjxInk2Acvqhp1B9fF8ewz"
 )
 
-// UserReduceLogs表的change_reason
+// 分销商账户相关常量
 const (
-	ChangeReasonUserOperation = "用户执行降AIGC" // 用户执行降AIGC
-	ChangeReasonGift          = "后台赠送权益次数"  // 后台赠送，用于活动推广等
-	ChangeReasonUserRecharge  = "用户付费购买次数"  // 用于用户购买降AIGC套餐的场景
+	CurrencyCny = "CNY"
+
+	AccountStatusNormal = "NORMAL"
+	AccountStatusFrozen = "FROZEN"
+	AccountStatusClosed = "CLOSED"
 )
