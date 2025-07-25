@@ -71,7 +71,7 @@ var AlphanumericSet = []rune{
 	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
 }
 
-// GenerateUserName 生成8位长度的随机用户名
+// GenerateUserName 生成6位长度的随机用户名
 func GenerateUserName(phone string) string {
 	phoneUint64, err := strconv.ParseUint(phone, 10, 64)
 	if err != nil {

@@ -29,8 +29,8 @@ type Agent struct {
 	ParentId   int       `json:"parent_id"`   // 上级代理商ID
 }
 
-// AgentAccount 分销商账户表
-type AgentAccount struct {
+// DistributionAccount 分销商账户表
+type DistributionAccount struct {
 	ID                 int64     `json:"id"`                   // 自增主键
 	UserID             int64     `json:"user_id"`              // user表id
 	Currency           string    `json:"currency"`             // 币种，CNY-人民币、USD-美元，默认：CNY
@@ -72,8 +72,8 @@ func (a *Agent) TableName() string {
 	return "agents"
 }
 
-func (a *AgentAccount) TableName() string {
-	return "agent_account"
+func (a *DistributionAccount) TableName() string {
+	return "distribution_account"
 }
 
 func (u *UserRights) TableName() string {
