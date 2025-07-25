@@ -5,9 +5,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateAgentAccount(agentAccount *AgentAccount, tx *gorm.DB) error {
+func CreateDistributionAccount(distributionAccount *DistributionAccount, tx *gorm.DB) error {
 	if tx == nil {
 		tx = mysql.GetGlobalDBIns()
 	}
-	return tx.Create(agentAccount).Error
+	return tx.Create(distributionAccount).Error
 }

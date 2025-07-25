@@ -6,6 +6,7 @@ import "time"
 type User struct {
 	ID               int64     `json:"id"`                // 自增ID，作为主键
 	Phone            string    `json:"phone"`             // 手机号码
+	UserName         string    `json:"user_name"`         // 用户名
 	RegistrationTime time.Time `json:"registration_time"` // 注册时间
 	LastLoginTime    time.Time `json:"last_login_time"`   // 上一次登录时间
 	Role             string    `json:"role"`              // 用户级别
@@ -28,8 +29,8 @@ type Agent struct {
 	ParentId   int       `json:"parent_id"`   // 上级代理商ID
 }
 
-// AgentAccount 分销商账户表
-type AgentAccount struct {
+// DistributionAccount 分销商账户表
+type DistributionAccount struct {
 	ID                 int64     `json:"id"`                   // 自增主键
 	UserID             int64     `json:"user_id"`              // user表id
 	Currency           string    `json:"currency"`             // 币种，CNY-人民币、USD-美元，默认：CNY
@@ -71,8 +72,8 @@ func (a *Agent) TableName() string {
 	return "agents"
 }
 
-func (a *AgentAccount) TableName() string {
-	return "agent_account"
+func (a *DistributionAccount) TableName() string {
+	return "distribution_account"
 }
 
 func (u *UserRights) TableName() string {

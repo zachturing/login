@@ -123,6 +123,7 @@ func registerUser(param phoneParam) (int, error) {
 		// 新用户注册
 		user = model.User{
 			Phone:            param.Phone,
+			UserName:         util.GenerateUserName(param.Phone),
 			RegistrationTime: time.Now(),
 			LastLoginTime:    time.Now(),
 			Role:             define.LEVEL_NORMAL,
@@ -138,7 +139,7 @@ func registerUser(param phoneParam) (int, error) {
 		}
 
 		// 创建分销商账户
-		var agentAccount = model.AgentAccount{
+		var agentAccount = model.DistributionAccount{
 			UserID:             user.ID,
 			Currency:           define.CurrencyCny,
 			Status:             define.AccountStatusNormal,
@@ -151,7 +152,7 @@ func registerUser(param phoneParam) (int, error) {
 			CreatedAt:          time.Now(),
 			UpdatedAt:          time.Now(),
 		}
-		if err = model.CreateAgentAccount(&agentAccount, tx); err != nil {
+		if err = model.CreateDistributionAccount(&agentAccount, tx); err != nil {
 			return err
 		}
 

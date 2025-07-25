@@ -71,6 +71,35 @@ var AlphanumericSet = []rune{
 	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
 }
 
+// GenerateUserName 生成6位长度的随机用户名
+func GenerateUserName(phone string) string {
+	phoneUint64, err := strconv.ParseUint(phone, 10, 64)
+	if err != nil {
+		return phone
+	}
+	// 放大 + 加盐
+	phoneUint64 = phoneUint64*define.PRIME1 + define.SALT
+	// 邀请码长度默认为6位
+	l := define.DefaultInvCodeLength
+
+	var code []rune
+	slIdx := make([]byte, l)
+
+	// 扩散
+	for i := 0; i < l; i++ {
+		slIdx[i] = byte(phoneUint64 % uint64(len(AlphanumericSet)))           // 获取 52 进制的每一位值
+		slIdx[i] = (slIdx[i] + byte(i)*slIdx[0]) % byte(len(AlphanumericSet)) // 其他位与个位加和再取余（让个位的变化影响到所有位）
+		phoneUint64 = phoneUint64 / uint64(len(AlphanumericSet))              // 相当于右移一位（52进制）
+	}
+
+	// 混淆
+	for i := 0; i < l; i++ {
+		idx := (byte(i) * define.PRIME2) % byte(l)
+		code = append(code, AlphanumericSet[slIdx[idx]])
+	}
+	return string(code)
+}
+
 // GenerateInvCodeByUserId 获取指定长度的邀请码，默认为6位
 func GenerateInvCodeByUserId(uid uint64) string {
 	// 放大 + 加盐
