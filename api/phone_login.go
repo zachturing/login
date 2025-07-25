@@ -165,6 +165,20 @@ func registerUser(param phoneParam) (int, error) {
 			return err
 		}
 
+		// 如果用户是被邀请的，则生成邀请记录
+		if user.ParentUserId != 0 {
+			invitationLogs := model.InvitationLogs{
+				InviterId:          user.ParentUserId,
+				InviteeId:          user.ID,
+				InviterRewardsType: "待定义",
+				InviteeRewardsType: "待定义",
+				Remarks:            "",
+			}
+			if err = model.CreateInvitationLogs(&invitationLogs, tx); err != nil {
+				return err
+			}
+		}
+
 		// TODO：基于配置项赠送权益
 
 		// 新用户注册生成空的降AIGC权益记录
