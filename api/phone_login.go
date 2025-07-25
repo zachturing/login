@@ -144,6 +144,7 @@ func registerUser(param phoneParam) (int, error) {
 			Currency:           define.CurrencyCny,
 			Status:             define.AccountStatusNormal,
 			Balance:            0.0,
+			FrozenAmount:       0.0,
 			WithdrawnAmount:    0.0,
 			TotalIncome:        0.0,
 			DirectPercent:      0.2,

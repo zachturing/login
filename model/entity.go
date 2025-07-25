@@ -35,6 +35,7 @@ type DistributionAccount struct {
 	UserID             int64     `json:"user_id"`              // user表id
 	Currency           string    `json:"currency"`             // 币种，CNY-人民币、USD-美元，默认：CNY
 	Balance            float64   `json:"balance"`              // 账户余额，两位小数
+	FrozenAmount       float64   `json:"frozen_amount"`        // 待结算金额，两位小数
 	WithdrawnAmount    float64   `json:"withdrawn_amount"`     // 已提现金额，两位小数
 	TotalIncome        float64   `json:"total_income"`         // 总收益，两位小数
 	DirectPercent      float64   `json:"direct_percent"`       // 直推分成比例：默认20%
