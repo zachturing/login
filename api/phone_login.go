@@ -170,6 +170,7 @@ func registerUser(param phoneParam) (int, error) {
 			invitationLogs := model.InvitationLogs{
 				InviterId:          user.ParentUserId,
 				InviteeId:          user.ID,
+				InviteeName:        user.UserName,
 				InviterRewardsType: "待定义",
 				InviteeRewardsType: "待定义",
 				Remarks:            "",

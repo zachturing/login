@@ -20,6 +20,7 @@ type User struct {
 type InvitationLogs struct {
 	ID                 int64     `json:"id"`
 	InviteeId          int64     `json:"invitee_id"`
+	InviteeName        string    `json:"invitee_name"`
 	InviterId          int64     `json:"inviter_id"`
 	InviteeRewardsType string    `json:"invitee_rewards_type"`
 	InviterRewardsType string    `json:"inviter_rewards_type"`
