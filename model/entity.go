@@ -16,6 +16,18 @@ type User struct {
 	InvCode          string    `json:"inv_code"`          // 用户邀请码，根据userId生成，每个用户唯一
 }
 
+// InvitationLogs 代表数据库中的一条邀请记录
+type InvitationLogs struct {
+	ID                 int64     `json:"id"`
+	InviteeId          int64     `json:"invitee_id"`
+	InviteeName        string    `json:"invitee_name"`
+	InviterId          int64     `json:"inviter_id"`
+	InviteeRewardsType string    `json:"invitee_rewards_type"`
+	InviterRewardsType string    `json:"inviter_rewards_type"`
+	Remarks            string    `json:"remarks"`
+	CreatedAt          time.Time `json:"created_at"`
+}
+
 type Agent struct {
 	ID         int64     `json:"id"`          // 代理商ID，自增
 	Phone      string    `json:"phone"`       // 代理商手机号
@@ -83,4 +95,8 @@ func (u *UserRights) TableName() string {
 
 func (u *UserReduceRights) TableName() string {
 	return "user_reduce_rights"
+}
+
+func (i *InvitationLogs) TableName() string {
+	return "invitation_logs"
 }
