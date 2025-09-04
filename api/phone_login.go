@@ -12,6 +12,7 @@ import (
 	"github.com/newdee/aipaper-util/log"
 	"github.com/zachturing/login/common/define"
 	"github.com/zachturing/login/common/xhttp"
+	apolloConfig "github.com/zachturing/login/config"
 	"github.com/zachturing/login/model"
 	"github.com/zachturing/login/util"
 	"gorm.io/gorm"
@@ -85,8 +86,15 @@ func LoginPhone(c *gin.Context) {
 
 	// 非生产环境禁止注册用户
 	if define.Env != config.ProdEnv {
-		xhttp.DiyOkCode(c, define.RegisterFailed, "非生产环境禁止新用户注册！")
-		return
+		phoneArray, err := apolloConfig.GetAllowRegistryPhone()
+		if err != nil {
+			xhttp.DiyOkCode(c, define.RegisterFailed, "非生产环境禁止新用户注册！")
+			return
+		}
+		if !util.ContainsStr(phoneArray, param.Phone) {
+			xhttp.DiyOkCode(c, define.RegisterFailed, "非生产环境禁止新用户注册！")
+			return
+		}
 	}
 
 	// 用户注册
@@ -96,11 +104,13 @@ func LoginPhone(c *gin.Context) {
 		xhttp.DiyOkCode(c, define.RegisterFailed, define.MapCodeToMsg[define.RegisterFailed])
 		return
 	}
+
 	// 注册完成调用百度推广的数据回传接口，调用失败记录日志，不要抛错
 	err = CallBaiduUploadConvertData(param.BdVid)
 	if err != nil {
 		log.Errorf("user register: call baidu upload convert data %v failed, err:%v", param.BdVid, err)
 	}
+
 	// 生成token
 	token, expiredTimeStamp, _ := util.GenerateToken(userID)
 	log.Debugf("phone login: register success, phone:%v, userID:%v", param.Phone, userID)

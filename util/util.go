@@ -220,3 +220,12 @@ func GenerateSMSCode() string {
 	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
 	return fmt.Sprintf("%04v", rnd.Int31n(10000)) // 生成范围在 1000 到 9999 之间
 }
+
+func ContainsStr(slice []string, str string) bool {
+	for _, item := range slice {
+		if item == str {
+			return true
+		}
+	}
+	return false
+}

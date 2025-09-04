@@ -58,16 +58,6 @@ type DistributionAccount struct {
 	UpdatedAt          time.Time `json:"updated_at"`           // 账户更新时间
 }
 
-type UserRights struct {
-	ID                 int64     `json:"id"`                   // 权益表的Id，自增
-	UserId             int64     `json:"user_id"`              // 用户ID
-	InvUsers           int       `json:"inv_users"`            // 用户已邀请的人数
-	DuplicateCheckNums int       `json:"duplicate_check_nums"` // PaperYY免费查重次数，每次限制1W字
-	UsedCheckNums      int       `json:"used_check_nums"`      // 已使用的查重次数
-	CreatedAt          time.Time `json:"created_at"`           // 创建时间
-	UpdatedAt          time.Time `json:"updated_at"`           // 更新时间
-}
-
 type UserReduceRights struct {
 	ID            int64     `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
 	UserID        int64     `gorm:"column:user_id;not null" json:"user_id"`
@@ -119,10 +109,6 @@ func (a *Agent) TableName() string {
 
 func (a *DistributionAccount) TableName() string {
 	return "distribution_account"
-}
-
-func (u *UserRights) TableName() string {
-	return "user_rights"
 }
 
 func (u *UserReduceRights) TableName() string {
