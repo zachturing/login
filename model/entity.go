@@ -18,14 +18,14 @@ type User struct {
 
 // InvitationLogs 代表数据库中的一条邀请记录
 type InvitationLogs struct {
-	ID                 int64     `json:"id"`
-	InviteeId          int64     `json:"invitee_id"`
-	InviteeName        string    `json:"invitee_name"`
-	InviterId          int64     `json:"inviter_id"`
-	InviteeRewardsType string    `json:"invitee_rewards_type"`
-	InviterRewardsType string    `json:"inviter_rewards_type"`
-	Remarks            string    `json:"remarks"`
-	CreatedAt          time.Time `json:"created_at"`
+	ID             int64     `json:"id"`
+	InviteeId      int64     `json:"invitee_id"`
+	InviteeName    string    `json:"invitee_name"`
+	InviterId      int64     `json:"inviter_id"`
+	InviteeRewards string    `json:"invitee_rewards"`
+	InviterRewards string    `json:"inviter_rewards"`
+	Remarks        string    `json:"remarks"`
+	CreatedAt      time.Time `json:"created_at"`
 }
 
 type Agent struct {
@@ -58,16 +58,6 @@ type DistributionAccount struct {
 	UpdatedAt          time.Time `json:"updated_at"`           // 账户更新时间
 }
 
-type UserRights struct {
-	ID                 int64     `json:"id"`                   // 权益表的Id，自增
-	UserId             int64     `json:"user_id"`              // 用户ID
-	InvUsers           int       `json:"inv_users"`            // 用户已邀请的人数
-	DuplicateCheckNums int       `json:"duplicate_check_nums"` // PaperYY免费查重次数，每次限制1W字
-	UsedCheckNums      int       `json:"used_check_nums"`      // 已使用的查重次数
-	CreatedAt          time.Time `json:"created_at"`           // 创建时间
-	UpdatedAt          time.Time `json:"updated_at"`           // 更新时间
-}
-
 type UserReduceRights struct {
 	ID            int64     `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
 	UserID        int64     `gorm:"column:user_id;not null" json:"user_id"`
@@ -75,6 +65,38 @@ type UserReduceRights struct {
 	UsedReduceNum int       `gorm:"column:used_reduce_num" json:"used_reduce_num"`
 	CreatedAt     time.Time `gorm:"column:created_at;not null;default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAt     time.Time `gorm:"column:updated_at;not null;default:CURRENT_TIMESTAMP;autoUpdateTime" json:"updated_at"`
+}
+
+type Coupon struct {
+	ID                 int64      `json:"id"`                   // 自增ID，作为主键
+	Type               int        `json:"type"`                 // 优惠券类型，1-折扣券，2-满减券，3-降AIGC次数券
+	RuleId             int        `json:"rule_id"`              // （外键）优惠券生成规则，暂时不用，留着后续使用
+	CreateUserId       int        `json:"create_user_id"`       // 生成优惠券的用户ID
+	ExchangeUserId     int64      `json:"exchange_user_id"`     // 兑换优惠券的用户ID，默认为-1
+	CouponCode         string     `json:"coupon_code"`          // 优惠券的Code
+	BindingOutlineKey1 string     `json:"binding_outline_key1"` // 优惠券绑定的大纲的key1，表示指定大纲可用，可以为空
+	SourceOrderId      int        `json:"source_order_id"`      // 优惠券的来源主订单Id，表示优惠券为用户购买产品获得，默认为-1
+	DiscountRate       float64    `json:"discount_rate"`        // 折扣系数，对于1-折扣券：0.3为3折优惠
+	RightsNum          int        `json:"rights_num"`           // 权益次数：对于3-满减券，10表示10次降AIGC次数
+	CreateTime         time.Time  `json:"create_time"`          // 优惠券的生成时间，默认为当前时间
+	UsedTime           *time.Time `json:"used_time"`            // 优惠券的使用时间，默认为空
+	ExpireTime         time.Time  `json:"expire_time"`          // 优惠券的过期时间，默认为设置的时间
+	Channel            string     `json:"channel"`              // 发放渠道，例如：淘宝/小红书/B站/微信公众号/抖音/其他
+	Status             int        `json:"status"`               // 优惠券状态，1-未使用，2-已使用，3-已过期，4-冻结，5-作废，6-已兑换
+}
+
+// 用户降AIGC记录
+type UserReduceLogs struct {
+	ID               int64     `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
+	UserID           int64     `gorm:"column:user_id;not null" json:"user_id"`
+	PreReduceNum     int       `gorm:"column:pre_reduce_num;not null" json:"pre_reduce_num"`
+	ChangeNum        int       `gorm:"column:change_num;not null" json:"change_num"`
+	PostReduceNum    int       `gorm:"column:post_reduce_num;not null" json:"post_reduce_num"`
+	ChangeReason     string    `gorm:"column:change_reason;type:varchar(10);not null" json:"change_reason"`
+	OriginalContents string    `gorm:"column:original_contents" json:"original_contents"`
+	PostContents     string    `gorm:"column:post_contents" json:"post_contents"`
+	CreatedAt        time.Time `gorm:"column:created_at;not null;default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt        time.Time `gorm:"column:updated_at;not null;default:CURRENT_TIMESTAMP;autoUpdateTime" json:"updated_at"`
 }
 
 func (u *User) TableName() string {
@@ -89,14 +111,18 @@ func (a *DistributionAccount) TableName() string {
 	return "distribution_account"
 }
 
-func (u *UserRights) TableName() string {
-	return "user_rights"
-}
-
 func (u *UserReduceRights) TableName() string {
 	return "user_reduce_rights"
 }
 
 func (i *InvitationLogs) TableName() string {
 	return "invitation_logs"
+}
+
+func (c *Coupon) TableName() string {
+	return "coupon"
+}
+
+func (u *UserReduceLogs) TableName() string {
+	return "user_reduce_logs"
 }

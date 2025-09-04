@@ -7,9 +7,9 @@ require (
 	github.com/go-playground/validator/v10 v10.22.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-jwt/jwt/v4 v4.5.1
+	github.com/google/uuid v1.1.2
 	github.com/magiconair/properties v1.8.5
 	github.com/newdee/aipaper-util v0.0.0-20250208083529-2028c5c7d526
-	github.com/shopspring/decimal v1.4.0
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.781
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms v1.0.781
 	gorm.io/gorm v1.25.11

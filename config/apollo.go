@@ -23,3 +23,16 @@ func GetTencentSMSConfig() (*TencentSMSConfig, error) {
 	}
 	return &param, nil
 }
+
+func GetAllowRegistryPhone() ([]string, error) {
+	cfg, err := config.Get(config.Common)
+	if err != nil {
+		return nil, err
+	}
+	var phoneStr []string
+	err = cfg.GetWithUnmarshal("allow_registry_phone", &phoneStr, &config.JSONUnmarshaler{})
+	if err != nil {
+		return nil, err
+	}
+	return phoneStr, nil
+}
