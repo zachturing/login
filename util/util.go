@@ -1,13 +1,17 @@
 package util
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"math/rand"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/google/uuid"
 	"github.com/zachturing/login/common/define"
 )
 
@@ -168,6 +172,47 @@ func DecodeInvCodeToUID(code string) (uint64, error) {
 	uid = (uid - define.SALT) / define.PRIME1
 
 	return uid, nil
+}
+
+// BuildCouponCode
+//
+//	@Description: 生成的优惠券
+//	@param channel 渠道
+//	@param businessType 业务
+//	@return string 优惠券：过程出错默认用uuid
+func BuildCouponCode(channel, businessType string) string {
+	// 生成 16 字节的随机数
+	randomBytes, err := generateRandomBytes(16)
+
+	// 如果出错，返回去除中划线后的UUID
+	if err != nil {
+		return strings.ReplaceAll(uuid.New().String(), "-", "")
+	}
+
+	// 获取当前时间戳
+	timestamp := time.Now().UnixNano()
+
+	// 拼接渠道、时间戳、业务类型、随机数
+	data := fmt.Sprintf("%s_%d%s%x", channel, timestamp, businessType, randomBytes)
+
+	// 使用 SHA-256 哈希函数生成哈希值
+	hash := sha256.Sum256([]byte(data))
+
+	// 将哈希值编码为十六进制字符串
+	cdk := hex.EncodeToString(hash[:])
+
+	// 返回前 32 个字符作为 CDK
+	return cdk[:32]
+}
+
+// generateRandomBytes 生成指定数量的随机字节
+func generateRandomBytes(n int) ([]byte, error) {
+	b := make([]byte, n)
+	_, err := rand.Read(b)
+	if err != nil {
+		return nil, err
+	}
+	return b, nil
 }
 
 // GenerateSMSCode 生成4位数短信验证码
