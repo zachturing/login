@@ -262,7 +262,10 @@ func processInviteRights(tx *gorm.DB, user *model.User) error {
 	}
 	discountRate := 0.0
 	inviterRewards := "降AIGC10次" // 邀请人奖励
-	if invitedCounts == 3 {
+	if invitedCounts == 1 {
+		discountRate = 0.9
+		inviterRewards = "降AIGC10次、9折正文优惠券"
+	} else if invitedCounts == 3 {
 		discountRate = 0.8
 		inviterRewards = "降AIGC10次、8折正文优惠券"
 	} else if invitedCounts == 10 {
