@@ -228,15 +228,8 @@ func initUserReduceRights(tx *gorm.DB, user *model.User) error {
 
 // 处理邀请权益
 func processInviteRights(tx *gorm.DB, user *model.User) error {
-	// 1.1 赠送被邀请人 10次降AIGC次数
-	if err := processUserReduceRights(user.ID, 10, tx); err != nil {
-		return err
-	}
-	// 1.2 赠送邀请人 10次降AIGC次数
-	if err := processUserReduceRights(user.ParentUserId, 10, tx); err != nil {
-		return err
-	}
-	// 2、被邀请人赠送9折优惠券
+	// 1、被邀请人赠送9折优惠券
+	inviteeRewards := "9折正文优惠券" // 被邀请人奖励
 	couponCode := &model.Coupon{
 		Type:           define.CouponTypeDiscount,
 		RuleId:         -1,
@@ -255,28 +248,28 @@ func processInviteRights(tx *gorm.DB, user *model.User) error {
 		return err
 	}
 
-	// 3、邀请人基于梯度获取优惠券奖励：3人-8折，10人-7折，20人-6折，30人-5折
+	// 2、邀请人基于梯度获取优惠券奖励：3人-8折，10人-7折，20人-6折，30人-5折
 	invitedCounts, err := model.CountInvitedUsers(user.ParentUserId, tx)
 	if err != nil {
 		return err
 	}
 	discountRate := 0.0
-	inviterRewards := "降AIGC10次" // 邀请人奖励
+	inviterRewards := ""
 	if invitedCounts == 1 {
 		discountRate = 0.9
-		inviterRewards = "降AIGC10次、9折正文优惠券"
+		inviterRewards = "9折正文优惠券"
 	} else if invitedCounts == 3 {
 		discountRate = 0.8
-		inviterRewards = "降AIGC10次、8折正文优惠券"
+		inviterRewards = "8折正文优惠券"
 	} else if invitedCounts == 10 {
 		discountRate = 0.7
-		inviterRewards = "降AIGC10次、7折正文优惠券"
+		inviterRewards = "7折正文优惠券"
 	} else if invitedCounts == 20 {
 		discountRate = 0.6
-		inviterRewards = "降AIGC10次、6折正文优惠券"
+		inviterRewards = "6折正文优惠券"
 	} else if invitedCounts == 30 {
 		discountRate = 0.5
-		inviterRewards = "降AIGC10次、5折正文优惠券"
+		inviterRewards = "5折正文优惠券"
 	}
 	if discountRate > 0.0 {
 		inviterCoupon := &model.Coupon{
@@ -296,46 +289,16 @@ func processInviteRights(tx *gorm.DB, user *model.User) error {
 		}
 	}
 
-	// 4、 生成邀请记录
+	// 3、 生成邀请记录
 	invitationLogs := model.InvitationLogs{
 		InviterId:      user.ParentUserId,
 		InviteeId:      user.ID,
 		InviteeName:    user.UserName,
-		InviterRewards: inviterRewards,
-		InviteeRewards: "降AIGC10次、9折正文优惠券",
+		InviterRewards: inviterRewards, // 邀请人奖励
+		InviteeRewards: inviteeRewards, // 被邀请人奖励
 		Remarks:        "",
 	}
 	if err = model.CreateInvitationLogs(&invitationLogs, tx); err != nil {
-		return err
-	}
-	return nil
-}
-
-func processUserReduceRights(userId int64, rightsNums int, tx *gorm.DB) error {
-	// 查询用户权益
-	userReduceRights, err := model.QueryUserReduceRights(userId, tx)
-	if err != nil {
-		return err
-	}
-	// 更新用户权益
-	preRightsNum := userReduceRights.RemainingNum
-	postRightsNum := preRightsNum + rightsNums
-	if err = model.UpdateUserReduceRightsColumnsByUserId(userId, map[string]interface{}{
-		"remaining_num": postRightsNum,
-	}, tx); err != nil {
-		return err
-	}
-	// 记录权益日志
-	userReduceRightsLog := &model.UserReduceLogs{
-		UserID:           userId,
-		PreReduceNum:     preRightsNum,
-		ChangeNum:        rightsNums,
-		PostReduceNum:    postRightsNum,
-		ChangeReason:     define.ChangeReasonRegistry,
-		OriginalContents: "",
-		PostContents:     "",
-	}
-	if err = tx.Create(userReduceRightsLog).Error; err != nil {
 		return err
 	}
 	return nil
