@@ -196,7 +196,7 @@ func initDistributionAccount(tx *gorm.DB, user *model.User) error {
 	var agentAccount = model.DistributionAccount{
 		UserID:             user.ID,
 		Currency:           define.CurrencyCny,
-		Status:             define.DistributionAccountStatusNormal,
+		Status:             define.DistributionAccountStatusPendingActivation,
 		Balance:            0.0,
 		FrozenAmount:       0.0,
 		WithdrawnAmount:    0.0,
