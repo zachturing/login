@@ -283,6 +283,8 @@ func processInviteRights(tx *gorm.DB, user *model.User) error {
 			CreateTime:     time.Now(),
 			UsedTime:       nil,
 			ExpireTime:     time.Date(2099, 12, 31, 23, 59, 59, 0, time.UTC),
+			Channel:        define.CouponChannelRegistry,
+			Status:         define.CouponStatusExchanged,
 		}
 		if err = tx.Create(inviterCoupon).Error; err != nil {
 			return err
