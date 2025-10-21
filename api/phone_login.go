@@ -276,7 +276,7 @@ func processInviteRights(tx *gorm.DB, user *model.User) error {
 			Type:           define.CouponTypeDiscount,
 			RuleId:         -1,
 			CreateUserId:   int(user.ID),
-			ExchangeUserId: user.ID,
+			ExchangeUserId: user.ParentUserId,
 			CouponCode:     util.BuildCouponCode(define.CouponChannelInvite, strconv.Itoa(define.CouponTypeDiscount)),
 			DiscountRate:   discountRate,
 			RightsNum:      0,

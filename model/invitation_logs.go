@@ -17,6 +17,6 @@ func CountInvitedUsers(inviterId int64, tx *gorm.DB) (int64, error) {
 		tx = mysql.GetGlobalDBIns()
 	}
 	var count int64
-	err := tx.Model(&InvitationLogs{}).Where("inviter_id = ?", inviterId).Count(&count).Error
+	err := tx.Model(&User{}).Where("parent_user_id = ?", inviterId).Count(&count).Error
 	return count, err
 }
